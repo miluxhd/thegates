@@ -1,0 +1,29 @@
+   {
+
+      "manifest_version": 2,
+
+      "name": "Pac Proxy with Auth",
+      "description": "Simple Pac Proxy Service with Auth",
+      "version": "1.1",
+      "background": {
+      "scripts":[ "proxy.js"  ]
+      },
+    "permissions": [
+        "tabs",
+        "storage",
+        "http://*/*",
+        "https://*/*",
+        "notifications",
+        "contextMenus",
+        "history",
+        "background",
+        "proxy",
+	"webRequest", 
+	"management",
+	"webRequestBlocking"
+    ],
+    "browser_action": {
+      "default_icon": "window.png",
+      "default_popup": "popup.html"
+    }
+    }
