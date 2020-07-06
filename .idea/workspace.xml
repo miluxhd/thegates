@@ -3,10 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="2398cd20-8772-44d5-be4a-e54869327df0" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/main.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/popup.html" beforeDir="false" afterPath="$PROJECT_DIR$/popup.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/proxy.js" beforeDir="false" afterPath="$PROJECT_DIR$/proxy.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -16,9 +14,6 @@
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
-  </component>
-  <component name="FavoritesManager">
-    <favorites_list name="thegates" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -86,7 +81,7 @@
       <option name="presentableId" value="Default" />
       <updated>1593181194575</updated>
       <workItem from="1593181195922" duration="329000" />
-      <workItem from="1593971181797" duration="21006000" />
+      <workItem from="1593971181797" duration="31901000" />
     </task>
     <servers />
   </component>
@@ -98,5 +93,9 @@
       <screen x="0" y="0" width="1366" height="732" />
     </state>
     <state x="278" y="0" width="809" height="736" key="CommitChangelistDialog2/0.0.1366.732@0.0.1366.732" timestamp="1593990867357" />
+    <state x="1702" y="242" key="new project wizard" timestamp="1594033038839">
+      <screen x="0" y="0" width="3286" height="1080" />
+    </state>
+    <state x="1702" y="242" key="new project wizard/0.0.3286.1080@0.0.3286.1080" timestamp="1594033038839" />
   </component>
 </project>
