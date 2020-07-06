@@ -1,29 +1,29 @@
-function disableProxy() {
-    chrome.storage.sync.set({'prx_enabled': false});
-    var config = {
-        mode: "system"
-    };
-    chrome.proxy.settings.set({
-        value: config,
-        scope: 'regular'
-    }, function () {
-    });
+function validate(username, password) {
+    if (username == null || password == null)
+        return false;
+    return true;
 }
 
-function saveProxy() {
+function login() {
     var config = null;
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
 
+    if (!validate(username, password)) {
+        console.log("invalid username or password");
+        return;
+    }
     function callback() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
-                result = xhr.responseText;
+                console.log("logging!!!!");
+                var result = xhr.responseText;
                 var obj = JSON.parse(result);
-                chrome.storage.sync.set({'prx_username': obj.username});
-                chrome.storage.sync.set({'prx_password': obj.password});
-                chrome.storage.sync.set({'prx_pac': obj.pacUrl});
-                chrome.storage.sync.set({'prx_enabled': true});
-            }
-            else {
+                browser.storage.local.set({'prx_username': obj.prx_username});
+                browser.storage.local.set({'prx_password': obj.prx_password});
+                browser.storage.local.set({'prx_port': obj.prx_port});
+                browser.storage.local.set({'prx_host': obj.prx_host});
+            } else {
                 alert(xhr.status);
             }
         }
@@ -39,76 +39,28 @@ function saveProxy() {
 function toggle() {
     var s = null;
 
-    chrome.storage.sync.get(['prx_username', 'prx_password', 'prx_pac', 'prx_enabled'], function (data) {
+    chrome.storage.local.get(['prx_mode'], function (data) {
         var x = document.getElementById("togglebtn");
-        if (data.prx_enabled === true) {
+        if (data.prx_mode === "enabled") {
             x.innerHTML = "Disabled";
-            chrome.storage.sync.set({'prx_enabled': false});
-            disableProxy();
+            browser.storage.local.set({'prx_mode': 'disabled'});
         } else {
-            saveProxy();
-            setTimeout(function () {
-                chrome.storage.sync.get(['prx_username', 'prx_password', 'prx_pac', 'prx_enabled'], function (data) {
-                    x.innerHTML = "Enabled";
-                    chrome.storage.sync.set({'prx_enabled': true});
-                    data.prx_enabled = true;
-                    setProxy(data);
-                });
-            }, 1000);
-
+            x.innerHTML = "Enabled";
+            browser.storage.local.set({'prx_mode': 'enabled'});
         }
-
     });
 
 }
 
-function saveInput() {
-    var username = document.getElementById("username").value;
-    var password = document.getElementById("password").value;
-    chrome.storage.sync.set({'username': username});
-    chrome.storage.sync.set({'password': password});
-
-};
-
-
 document.addEventListener('DOMContentLoaded', function () {
     var togglebtn = document.getElementById("togglebtn");
-    var loginbtn = document.getElementById("savebtn");
-    chrome.storage.sync.get('prx_enabled', function (data) {
-        if (data.prx_enabled == true)
+    var loginbtn = document.getElementById("loginbtn");
+    chrome.storage.local.get('prx_mode', function (data) {
+        if (data.prx_mode == 'enabled')
             togglebtn.innerHTML = "Enabled";
         else
             togglebtn.innerHTML = "Disabled";
     });
+    loginbtn.addEventListener('click', login);
     togglebtn.addEventListener('click', toggle);
-    loginbtn.addEventListener('click', saveInput);
 });
-
-
-function setProxy(data) {
-    var config = null;
-
-    if (data.prx_pac == null) {
-        alert("no proxy")
-        return;
-    }
-
-    var config = {
-        mode: "system"
-    };
-
-
-    if (data.prx_enabled)
-        config = {
-            mode: "pac_script",
-            pacScript: {
-                url: data.prx_pac
-            }
-        };
-
-    chrome.proxy.settings.set({
-        value: config,
-        scope: 'regular'
-    }, function () {
-    });
-}

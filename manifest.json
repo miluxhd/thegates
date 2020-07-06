@@ -2,28 +2,31 @@
 
       "manifest_version": 2,
 
-      "name": "Pac Proxy with Auth",
+      "name": "Simple Proxy Extention",
       "description": "Simple Pac Proxy Service with Auth",
       "version": "1.1",
       "background": {
-      "scripts":[ "proxy.js", "auth.js"  ]
+      "scripts":[ "proxy.js"  ]
       },
     "permissions": [
-        "tabs",
-        "storage",
-        "http://*/*",
-        "https://*/*",
-        "notifications",
-        "contextMenus",
-        "history",
-        "background",
-        "proxy",
-	"webRequest", 
-	"management",
-	"webRequestBlocking"
+      "browsingData",
+      "proxy",
+      "storage",
+      "tabs",
+      "webRequest",
+      "webRequestBlocking",
+      "downloads",
+      "notifications",
+      "<all_urls>"
     ],
     "browser_action": {
       "default_icon": "window.png",
       "default_popup": "popup.html"
-    }
+    },
+     "browser_specific_settings": {
+       "gecko": {
+         "id": "milux@gmail.com",
+         "strict_min_version": "40.0"
+       }
+     }
     }
