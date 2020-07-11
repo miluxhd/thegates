@@ -1,14 +1,14 @@
 let authData = {};
 
 function sendAuth(details, callbackFn) {
-        console.log("onAuthRequired!", details, callbackFn);
-        if (!Object.keys(authData)[0]) {
-            loadAuthData();
-        }
-        callbackFn({
-            authCredentials:{username: authData["prx_username"], password: authData["prx_password"]}
-        });
+    console.log("onAuthRequired!", details, callbackFn);
+    if (!Object.keys(authData)[0]) {
+        loadAuthData();
     }
+    callbackFn({
+        authCredentials: {username: authData["prx_username"], password: authData["prx_password"]}
+    });
+}
 
 chrome.webRequest.onAuthRequired.addListener(sendAuth,
     {urls: ["<all_urls>"]},
@@ -24,8 +24,9 @@ function storageOnChanged(changes, area) {
         if (element === "prx_mode")
             if (authData["prx_mode"] === "disabled")
                 setDisabled();
-            else if (authData["prx_mode"] === "enabled")
+            else if (authData["prx_mode"] === "enabled") {
                 setEnabled();
+            }
         // }
     });
 }
@@ -35,13 +36,11 @@ chrome.runtime.onInstalled.addListener(function callback() {
 })
 
 function loadAuthData() {
-        chrome.storage.local.get(['prx_username', 'prx_password', 'prx_host', 'prx_port', 'prx_mode', 'prx_pac'], function (data) {
-            authData['prx_username'] = data.prx_username;
-            authData['prx_password'] = data.prx_password;
-            authData['prx_host'] = data.prx_host;
-            authData['prx_port'] = data.prx_port;
+    chrome.storage.local.get(['prx_username', 'prx_password', 'prx_host', 'prx_port', 'prx_mode', 'prx_pac'], function (data) {
+        authData['prx_username'] = data.prx_username;
+        authData['prx_password'] = data.prx_password;
             authData['prx_mode'] = data.prx_mode;
-            authData['prx_pac'] = data.prx_pac;
+        authData['prx_pac'] = data.prx_pac;
     });
 }
 
@@ -49,14 +48,12 @@ function setEnabled() {
     setMode(true);
     setProxy();
     console.log('******* enabled mode');
-    console.log(authData);
 }
 
 function setDisabled() {
     setMode(false);
     setProxy();
     console.log('******* disabled mode');
-    console.log(authData);
 }
 
 async function setProxy() {
@@ -65,7 +62,6 @@ async function setProxy() {
     if (!Object.keys(authData)[0]) {
         await loadAuthData();
     }
-    console.log(authData);
 
     if (authData['prx_mode'] === "enabled")
         config = {

@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "Pac Proxy with Auth",
+  "name": "The Gates Proxy",
   "description": "Simple Pac Proxy Service with Auth",
   "version": "1.1",
   "background": {

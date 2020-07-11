@@ -1,5 +1,5 @@
 function validate(username, password) {
-    if (username === '' || password === '')
+    if (username === '' || password === '' || username == null || password == null)
         return false;
     return true;
 }
@@ -18,23 +18,20 @@ function login() {
     function callback() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
-                console.log("logging!!!!");
                 var result = xhr.responseText;
                 var obj = JSON.parse(result);
                 chrome.storage.local.set({
                         'prx_username': obj.prx_username,
                         'prx_password': obj.prx_password,
-                        'prx_port': obj.prx_port,
-                        'prx_host': obj.prx_host,
                         'prx_pac': obj.prx_pac,
                         'login_password': password,
                         'login_username': username
                     }
                 );
-                alert(obj.prx_pac);
+                alert("Welcome!")
 
             } else {
-                alert(xhr.status);
+                alert("Authentication failure. please check username and passowrd and try it again! ");
             }
         }
     };
@@ -45,6 +42,7 @@ function login() {
     url.searchParams.set('p', password);
     xhr.open("GET", url, true);
     xhr.onreadystatechange = callback;
+    xhr.timeout = 5000;
     xhr.send();
 }
 
@@ -52,7 +50,11 @@ function login() {
 function toggle() {
     var s = null;
 
-    chrome.storage.local.get(['prx_mode'], function (data) {
+    chrome.storage.local.get(['prx_mode','prx_username','prx_password' , 'prx_pac'], function (data) {
+        if (!validate(data.prx_username,data.prx_password)) {
+            alert("You are not authenticated! Please login and try again.");
+            return;
+        }
         var x = document.getElementById("togglebtn");
         if (data.prx_mode === "enabled") {
             x.innerHTML = "Disabled";
