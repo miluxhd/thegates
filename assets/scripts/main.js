@@ -1,37 +1,48 @@
-function disableProxy() {
-    chrome.storage.sync.set({'prx_enabled': false});
-    var config = {
-        mode: "system"
-    };
-    chrome.proxy.settings.set({
-        value: config,
-        scope: 'regular'
-    }, function () {
-    });
+function validate(username, password) {
+    if (username === '' || password === '' || username == null || password == null)
+        return false;
+    return true;
 }
 
-function saveProxy() {
+function login() {
     var config = null;
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+
+    if (!validate(username, password)) {
+        console.log("invalid username or password");
+        alert("invalid username or password")
+        return;
+    }
 
     function callback() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
-                result = xhr.responseText;
+                var result = xhr.responseText;
                 var obj = JSON.parse(result);
-                chrome.storage.sync.set({'prx_username': obj.username});
-                chrome.storage.sync.set({'prx_password': obj.password});
-                chrome.storage.sync.set({'prx_pac': obj.pacUrl});
-                chrome.storage.sync.set({'prx_enabled': true});
-            }
-            else {
-                alert(xhr.status);
+                chrome.storage.local.set({
+                        'prx_username': obj.prx_username,
+                        'prx_password': obj.prx_password,
+                        'prx_pac': obj.prx_pac,
+                        'login_password': password,
+                        'login_username': username
+                    }
+                );
+                alert("Welcome!")
+
+            } else {
+                alert("Authentication failure. please check username and passowrd and try it again! ");
             }
         }
     };
 
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://thegates/credentials.json", true);
+    let url = new URL('https://panjreh.ir/login');
+    url.searchParams.set('u', username);
+    url.searchParams.set('p', password);
+    xhr.open("GET", url, true);
     xhr.onreadystatechange = callback;
+    xhr.timeout = 5000;
     xhr.send();
 }
 
@@ -39,76 +50,38 @@ function saveProxy() {
 function toggle() {
     var s = null;
 
-    chrome.storage.sync.get(['prx_username', 'prx_password', 'prx_pac', 'prx_enabled'], function (data) {
-        var x = document.getElementById("togglebtn");
-        if (data.prx_enabled === true) {
-            x.innerHTML = "Disabled";
-            chrome.storage.sync.set({'prx_enabled': false});
-            disableProxy();
-        } else {
-            saveProxy();
-            setTimeout(function () {
-                chrome.storage.sync.get(['prx_username', 'prx_password', 'prx_pac', 'prx_enabled'], function (data) {
-                    x.innerHTML = "Enabled";
-                    chrome.storage.sync.set({'prx_enabled': true});
-                    data.prx_enabled = true;
-                    setProxy(data);
-                });
-            }, 1000);
-
+    chrome.storage.local.get(['prx_mode','prx_username','prx_password' , 'prx_pac'], function (data) {
+        if (!validate(data.prx_username,data.prx_password)) {
+            alert("You are not authenticated! Please login and try again.");
+            return;
         }
-
+        var x = document.getElementById("togglebtn");
+        if (data.prx_mode === "enabled") {
+            x.checked = false;
+            chrome.storage.local.set({'prx_mode': 'disabled'});
+        } else {
+            x.checked = true;
+            chrome.storage.local.set({'prx_mode': 'enabled'});
+        }
     });
 
 }
-
-function saveInput() {
-    var username = document.getElementById("username").value;
-    var password = document.getElementById("password").value;
-    chrome.storage.sync.set({'username': username});
-    chrome.storage.sync.set({'password': password});
-
-};
-
 
 document.addEventListener('DOMContentLoaded', function () {
     var togglebtn = document.getElementById("togglebtn");
-    var loginbtn = document.getElementById("savebtn");
-    chrome.storage.sync.get('prx_enabled', function (data) {
-        if (data.prx_enabled == true)
-            togglebtn.innerHTML = "Enabled";
+    var loginbtn = document.getElementById("loginbtn");
+
+    chrome.storage.local.get(['prx_mode', 'login_username', 'login_password'], function (data) {
+        if (data.login_username && data.login_password) {
+            document.getElementById("username").value = data.login_username;
+            document.getElementById("password").value = data.login_password;
+        }
+        if (data.prx_mode === 'enabled')
+        
+            togglebtn.checked = true;
         else
-            togglebtn.innerHTML = "Disabled";
+            togglebtn.checked = false;
     });
     togglebtn.addEventListener('click', toggle);
-    loginbtn.addEventListener('click', saveInput);
+    loginbtn.addEventListener('click', login);
 });
-
-
-function setProxy(data) {
-    var config = null;
-
-    if (data.prx_pac == null) {
-        alert("no proxy")
-        return;
-    }
-
-    var config = {
-        mode: "system"
-    };
-
-
-    if (data.prx_enabled)
-        config = {
-            mode: "pac_script",
-            pacScript: {
-                url: data.prx_pac
-            }
-        };
-
-    chrome.proxy.settings.set({
-        value: config,
-        scope: 'regular'
-    }, function () {
-    });
-}
